@@ -1,0 +1,24 @@
+{
+  "name": "@alexrintt/gatsby-source-github-discussions",
+  "version": "0.1.0",
+  "description": "Load your GitHub repository discussions as Gatsby data source.",
+  "main": "index.js",
+  "author": {
+    "email": "alexrintt@gmail.com",
+    "name": "Alex Rintt",
+    "url": "https://github.com/alexrintt"
+  },
+  "license": "MIT",
+  "keywords": [
+    "gatsby-plugin",
+    "github",
+    "discussions",
+    "gatsby",
+    "data",
+    "source"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"No build script setup\""
+  }
+}
