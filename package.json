@@ -10,15 +10,19 @@
   },
   "license": "MIT",
   "keywords": [
-    "gatsby-plugin",
-    "github",
-    "discussions",
     "gatsby",
-    "data",
-    "source"
+    "gatsby-plugin",
+    "gatsby-source-plugin",
+    "github",
+    "discussions"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"No build script setup\""
+  },
+  "dependencies": {
+    "@octokit/graphql": "^5.0.1",
+    "gatsby-source-filesystem": "^4.24.0",
+    "yup": "^0.32.11"
   }
 }
