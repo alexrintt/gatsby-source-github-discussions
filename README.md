@@ -4,7 +4,7 @@ To install this package just run:
 
 ```shell
 npm install @alexrintt/gatsby-source-github-discussions
-                    # or
+# or
 yarn add @alexrintt/gatsby-source-github-discussions
 ```
 
