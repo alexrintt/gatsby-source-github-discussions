@@ -1,4 +1,4 @@
-### Installation
+## Installation
 
 To install this package just run:
 
@@ -8,7 +8,7 @@ npm install @alexrintt/gatsby-source-github-discussions
 yarn add @alexrintt/gatsby-source-github-discussions
 ```
 
-### Usage
+## Usage
 
 In your `gatsby-config.js`:
 
