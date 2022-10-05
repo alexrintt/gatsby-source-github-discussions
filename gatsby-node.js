@@ -1,5 +1,4 @@
 const assert = require("assert");
-const { graphql } = require("@octokit/graphql");
 const { fetchDiscussions } = require("./src/discussions");
 const yup = require("yup");
 
@@ -170,7 +169,7 @@ exports.sourceNodes = async (
 
 exports.onCreateNode = async (
   {
-    node, // the node that was just created
+    node,
     actions: { createNode, createNodeField },
     createContentDigest,
     createNodeId,
