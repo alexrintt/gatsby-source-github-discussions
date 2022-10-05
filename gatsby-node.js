@@ -59,6 +59,7 @@ function assertValidOptions(pluginOptions) {
     orderByField: yup.string().oneOf(Object.values(DiscussionOrderField)),
     categoryIds: yup.array().of(yup.string()),
     categorySlugs: yup.array().of(yup.string()),
+    customSchemaTypes: yup.object(),
   });
 
   assert(
@@ -122,6 +123,16 @@ async function getRepositoryDiscussions({
   return discussions;
 }
 
+function defaultSchemaTypes(pluginOptions) {
+  return Object.values(GitHubObjectType).reduce(
+    (previous, current) => ({
+      ...previous,
+      [current]: pluginOptions.customSchemaTypes?.[current] ?? [],
+    }),
+    {}
+  );
+}
+
 exports.sourceNodes = async (
   {
     actions: { createNode },
@@ -132,6 +143,8 @@ exports.sourceNodes = async (
   pluginOptions
 ) => {
   pluginOptions = pluginOptions ?? {};
+
+  pluginOptions.customSchemaTypes = defaultSchemaTypes(pluginOptions);
 
   assertValidOptions(pluginOptions);
 
@@ -212,10 +225,33 @@ exports.onCreateNode = async (
     });
   }
 
+  async function createFileNodeFrom(node, key, fieldName = undefined) {
+    if (typeof node[key] !== `string`) return;
+    if (!node[key].startsWith(`http`)) return;
+
+    const fileNode = await createRemoteFileNode({
+      url: node[key],
+      parentNodeId: node.id,
+      createNode,
+      createNodeId,
+      getCache,
+    });
+
+    if (fileNode) {
+      createNodeField({ node, name: fieldName ?? key, value: fileNode.id });
+    }
+  }
+
   if (node.internal.type === GitHubObjectType.DISCUSSION) {
     const discussion = node;
 
     await createUserNode(discussion.author);
+
+    for (const key in discussion) {
+      if (key.toLowerCase().endsWith(`imageurl`)) {
+        await createFileNodeFrom(discussion, key);
+      }
+    }
 
     for (const label of discussion.labels) {
       await createLabelNode(label);
@@ -225,31 +261,31 @@ exports.onCreateNode = async (
   if (node.internal.type === GitHubObjectType.USER) {
     const userNode = node;
 
-    const fileNode = await createRemoteFileNode({
-      url: userNode.avatarUrl,
-      parentNodeId: userNode.id,
-      createNode,
-      createNodeId,
-      getCache,
-    });
-
-    if (fileNode) {
-      createNodeField({ node, name: "avatarImage", value: fileNode.id });
-    }
+    await createFileNodeFrom(userNode, `avatarUrl`, `avatarImage`);
   }
 };
 
-exports.createSchemaCustomization = ({ actions }) => {
+exports.createSchemaCustomization = ({ actions }, pluginOptions) => {
   const { createTypes } = actions;
+
+  pluginOptions.customSchemaTypes = defaultSchemaTypes(pluginOptions);
+
+  const githubUserTypeFields =
+    pluginOptions.customSchemaTypes[GitHubObjectType.USER].join(`\n`);
+
+  const githubDiscussionTypeFields =
+    pluginOptions.customSchemaTypes[GitHubObjectType.DISCUSSION].join(`\n`);
 
   createTypes(`
     type ${GitHubObjectType.USER} implements Node {
-      avatarImage: File @link(from: "fields.avatarImage")
+      ${githubUserTypeFields}
       discussions: [${GitHubObjectType.DISCUSSION}] @link(by: "author.githubId", from: "githubId")
+      avatarImage: File @link(from: "fields.avatarImage")
     }
     type ${GitHubObjectType.DISCUSSION} implements Node {
       author: ${GitHubObjectType.USER} @link(from: "author.githubId", by: "githubId")
       labels: [${GitHubObjectType.LABEL}] @link(from: "labels.githubId", by: "githubId")
+      ${githubDiscussionTypeFields}
     }
   `);
 };
