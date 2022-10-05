@@ -18,6 +18,9 @@ In your `gatsby-config.js`:
   options: {
     owner: `alexrintt`,
     repo: `rintt`,
+    // Most likely to be an Announcements channel category, this way
+    // only users with repo write access can allow a post to be deployed.
+    categorySlugs: [`Published`],
     githubToken: process.env.GITHUB_TOKEN,
     // You can use this key to filter any resource.
     // So you can use multiple instances of this plugin, keep the relationships
