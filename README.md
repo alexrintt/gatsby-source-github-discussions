@@ -49,6 +49,8 @@ In your `gatsby-config.js`:
 
 ## Features
 
+This plugin fetches the discussions from the given configured repositories (if enabled) and link with their respective authors and labels. Further details are available on [Gatsby - Creating a source plugin](https://www.gatsbyjs.com/docs/how-to/plugins-and-themes/creating-a-source-plugin/).
+
 - Custom schema type for this use-case, this means you can filter discussion by authors and vice-versa and take full advantage of Gatsby GraphQL shema types.
 - Authors have optimized _avatarImage_.
 - Discussions have optimized _thumbnailImageUrl_.
