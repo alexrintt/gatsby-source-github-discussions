@@ -190,7 +190,7 @@ exports.fetchDiscussions = fetchDiscussions;
 async function getDiscussionCategoryId(owner, repo, { categorySlug, token }) {
   const {
     repository: {
-      discussionCategory: { id },
+      discussionCategory: { githubId },
     },
   } = await graphql(
     `
@@ -215,7 +215,7 @@ async function getDiscussionCategoryId(owner, repo, { categorySlug, token }) {
       },
     }
   );
-  return id;
+  return githubId;
 }
 exports.getDiscussionCategoryId = getDiscussionCategoryId;
 
